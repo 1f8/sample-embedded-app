@@ -10,15 +10,17 @@ const Index = () => {
   const [ open, setOpen ] = useState(false)
 
   const handleSelection = (resources) => {
+    const idsFromResources = resources.selection.map((product) => product.id)
     setOpen(false)
-    console.log(resources)
+    console.log(idsFromResources)
   }
 
   return (
     <Page>
       <TitleBar title='Sample App'
         primaryAction={{
-          content: 'Select products',
+          content : 'Select products',
+          onAction: () => {setOpen(true)}
         }} />
       <ResourcePicker resourceType='Product'
           showVariants={false}
@@ -28,7 +30,7 @@ const Index = () => {
       <Layout>
         <EmptyState heading='Discount your products temporarily'
             action={{
-              content : 'Select productss',
+              content : 'Select products',
               onAction: () => {
                 setOpen(true)
               },
