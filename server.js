@@ -27,9 +27,10 @@ app.prepare().then(() => {
       scopes: ['read_products'],
       afterAuth(ctx) {
         // eslint-disable-next-line no-unused-vars
-        const { shop, accessToken } = ctx.session
+        const urlParams = new URLSearchParams(ctx.request.url)
+        const shop = urlParams.get('shop')
 
-        ctx.redirect('/')
+        ctx.redirect(`/?shop=${shop}`)
       },
     })
   )
