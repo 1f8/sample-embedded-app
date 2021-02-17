@@ -1,4 +1,6 @@
-import React, { useState, useEffect, useCallback } from 'react'
+/* eslint-disable import/no-extraneous-dependencies */
+/* eslint-disable no-unused-vars */
+import React, { useState, useEffect } from 'react'
 import {
     Banner,
     Card,
@@ -51,7 +53,7 @@ const EditProduct = () => {
         itemToBeConsumed()
     }, [])
 
-    const handleChange = useCallback((value) => setDiscount(value), [])
+    const handleChange = (value) => setDiscount(value)
 
     return (
       <Mutation mutation={UPDATE_PRICE}>

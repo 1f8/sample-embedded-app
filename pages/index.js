@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 /* eslint-disable react/react-in-jsx-scope */
-import React, { useState, useCallback } from 'react'
+import React, { useState } from 'react'
 import { EmptyState, Layout, Page } from '@shopify/polaris'
 import { ResourcePicker, TitleBar } from '@shopify/app-bridge-react'
 import store from 'store-js'
@@ -12,12 +12,11 @@ const Index = () => {
   const [ open, setOpen ] = useState(false)
   const emptyState = !store.get('ids')
 
-  const handleSelection = useCallback((resources) => {
+  const handleSelection = (resources) => {
     const idsFromResources = resources.selection.map((product) => product.id)
     setOpen(false)
-    console.log('idsFromResources', idsFromResources)
     store.set('ids', idsFromResources)
-  }, [])
+  }
 
   return (
     <Page>

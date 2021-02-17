@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import React, { useState, useCallback } from 'react'
+import React, { useState } from 'react'
 import {
     Button,
     Card,
@@ -23,7 +23,7 @@ import {
         e.preventDefault()
         return setDiscount(discount)
     }
-    const handleChange = useCallback((value) => setDiscount(value), [])
+    const handleChange = (value) => setDiscount(value)
 
       return (
         <Page>
