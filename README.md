@@ -8,3 +8,4 @@ Updating the code with react-hooks and using our linter as much as possible
 - the tutorial will tell you that you can't use functional style due to polaris needing `state`, but you can use react-hooks with functions instead of classes.
 - make sure to update both `APP URL` and  `Allowed redirection URL` in the App setup when ngrok url expires.
 - When you get an error `Error: Cannot find module 'webpack'` , delete node_modules, `npm install` again, and install (webpack v4)[https://github.com/webpack/webpack/releases/tag/v4.45.0] `npm i --save webpack@4.45.0` instead of v5
+- While developing, make sure to clear the local storage data otherwise you get a warning like `Warning: Text content did not match`
