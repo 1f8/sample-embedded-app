@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import React, { useState } from 'react'
+import React, { useState, useCallback } from 'react'
 import {
     Button,
     Card,
@@ -20,13 +20,10 @@ import {
       const textStatus = enabled ? 'enabled' : 'disabled'
 
     const handleSubmit = (e) => {
-        console.log('discount', discount)
         e.preventDefault()
         return setDiscount(discount)
     }
-    const handleChange = (field) => (value) => field(value)
-
-    const handleToggle = () => setEnabled(!enabled)
+    const handleChange = useCallback((value) => setDiscount(value), [])
 
       return (
         <Page>
@@ -37,7 +34,7 @@ import {
                 <Form onSubmit={handleSubmit}>
                   <FormLayout>
                     <TextField value={discount}
-                      onChange={handleChange('setDiscount')}
+                      onChange={handleChange}
                       label='Discount percentage'
                       type='discount' />
                     <Stack distribution='trailing'>
@@ -53,7 +50,7 @@ import {
             description='Temporarily disable all Sample App price updates'>
               <SettingToggle action={{
                 content : contentStatus,
-                onAction: handleToggle,
+                onAction: () => {setEnabled(!enabled)},
               }}
               enabled={enabled}>
                 This setting is{' '}

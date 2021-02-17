@@ -1,19 +1,23 @@
 /* eslint-disable no-console */
 /* eslint-disable react/react-in-jsx-scope */
-import React, { useState } from 'react'
+import React, { useState, useCallback } from 'react'
 import { EmptyState, Layout, Page } from '@shopify/polaris'
 import { ResourcePicker, TitleBar } from '@shopify/app-bridge-react'
+import store from 'store-js'
+import ResourceListWithProducts from '../components/ResourceList'
 
 const img = 'https://cdn.shopify.com/s/files/1/0757/9955/files/empty-state.svg'
 
 const Index = () => {
   const [ open, setOpen ] = useState(false)
+  const emptyState = !store.get('ids')
 
-  const handleSelection = (resources) => {
+  const handleSelection = useCallback((resources) => {
     const idsFromResources = resources.selection.map((product) => product.id)
     setOpen(false)
-    console.log(idsFromResources)
-  }
+    console.log('idsFromResources', idsFromResources)
+    store.set('ids', idsFromResources)
+  }, [])
 
   return (
     <Page>
@@ -25,20 +29,22 @@ const Index = () => {
       <ResourcePicker resourceType='Product'
           showVariants={false}
           open={open}
-          onSelection={(resources) => handleSelection(resources)}
+          onSelection={handleSelection}
           onCancel={() => setOpen(false)} />
-      <Layout>
-        <EmptyState heading='Discount your products temporarily'
-            action={{
-              content : 'Select products',
-              onAction: () => {
-                setOpen(true)
-              },
-            }}
-            image={img}>
-          <p>Select products to change their price temporarily.</p>
-        </EmptyState>
-      </Layout>
+      {emptyState ? (
+        <Layout>
+          <EmptyState heading='Discount your products temporarily'
+              action={{
+                content : 'Select products',
+                onAction: () => {setOpen(true)},
+              }}
+              image={img}>
+            <p>Select products to change their price temporarily.</p>
+          </EmptyState>
+        </Layout>
+      ) : (
+        <ResourceListWithProducts />
+      )}
     </Page>
   )
 }
