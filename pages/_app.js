@@ -1,6 +1,5 @@
 /* eslint-disable react/jsx-no-undef */
 import React from 'react'
-import App from 'next/app'
 import Head from 'next/head'
 import { AppProvider } from '@shopify/polaris'
 import ClientRouter from '../components/ClientRouter'
@@ -9,6 +8,7 @@ import { ApolloProvider } from 'react-apollo'
 import { Provider } from '@shopify/app-bridge-react'
 import '@shopify/polaris/dist/styles.css'
 import translations from '@shopify/polaris/locales/en.json'
+// import Cookies from 'js-cookie'
 
 const client = new ApolloClient({
   fetchOptions: {
@@ -16,12 +16,10 @@ const client = new ApolloClient({
   },
 })
 
-class MyApp extends App {
-  render() {
-    // eslint-disable-next-line no-unused-vars
-    const { Component, pageProps, shopOrigin } = this.props
+function MyApp ({ Component, pageProps }) {
     // eslint-disable-next-line no-undef
-    const config = { apiKey: API_KEY, shopOrigin, forceRedirect: true }
+    // shopOrigin should be set in cookies but not able to get it, so for testing purpose using process.env value
+    const config = { apiKey: API_KEY, shopOrigin: HOST, forceRedirect: true }
 
     return (
       <React.Fragment>
@@ -39,9 +37,6 @@ class MyApp extends App {
         </Provider>
       </React.Fragment>
     )
-  }
 }
-
-MyApp.getInitialProps = async ({ ctx }) => ({ shopOrigin: ctx.query.shop })
 
 export default MyApp

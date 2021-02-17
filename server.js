@@ -32,6 +32,13 @@ app.prepare().then(() => {
         const urlParams = new URLSearchParams(ctx.request.url)
         const shop = urlParams.get('shop')
 
+      //   ctx.cookies.set('shopOrigin', shop, {
+      //     httpOnly : true,
+      //     secure   : true,
+      //     signed   : true,
+      //     overwrite: true,
+      //     sameSite : 'none',
+      // })
         ctx.redirect(`/?shop=${shop}`)
       },
     })
