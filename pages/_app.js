@@ -20,7 +20,7 @@ const client = new ApolloClient({
 function MyApp ({ Component, pageProps }) {
     // eslint-disable-next-line no-undef
     // shopOrigin should be set in cookies but not able to get it, so for testing purpose using process.env value
-    const config = { apiKey: API_KEY, shopOrigin: HOST, forceRedirect: true }
+    const config = { apiKey: API_KEY, shopOrigin: SHOP, forceRedirect: true }
 
     return (
       <React.Fragment>

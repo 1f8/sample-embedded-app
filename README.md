@@ -9,3 +9,41 @@ Updating the code with react-hooks and using our linter as much as possible
 - make sure to update both `APP URL` and  `Allowed redirection URL` in the App setup when ngrok url expires.
 - When you get an error `Error: Cannot find module 'webpack'` , delete node_modules, `npm install` again, and install (webpack v4)[https://github.com/webpack/webpack/releases/tag/v4.45.0] `npm i --save webpack@4.45.0` instead of v5
 - While developing, make sure to clear the local storage data otherwise you get a warning like `Warning: Text content did not match`
+
+- There are [mandatory webhooks](https://shopify.dev/tutorials/add-gdpr-webhooks-to-your-app#mandatory-webhooks) need to be setup for your app due to GDPR. In Shopify, GDPR is applied to all user data not just EU.
+
+Example of webhook request and response
+REQUEST
+```
+    router.post('/webhooks/products/create', webhook, (ctx) => {
+        console.log('received webhook: ', ctx.state.webhook)
+    })
+```
+
+REQPONSE
+```
+    received webhook:  {
+        topic: 'PRODUCTS_CREATE',
+        domain: 'YOURSHOPNAME.myshopify.com',
+        payload: {
+            id: 6111111711111,
+            title: 'Special color jeans',
+            body_html: 'Fun color jeans',
+            vendor: 'Your Shop Name',
+            product_type: '',
+            created_at: '2021-02-18T10:45:15+09:00',
+            handle: 'special-color-jeans',
+            updated_at: '2021-02-18T10:45:16+09:00',
+            published_at: null,
+            template_suffix: '',
+            status: 'draft',
+            published_scope: 'web',
+            tags: '',
+            admin_graphql_api_id: 'gid://shopify/Product/6111111711111',
+            variants: [ [Object] ],
+            options: [ [Object] ],
+            images: [],
+            image: null
+        }
+    }
+```
