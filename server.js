@@ -12,7 +12,8 @@ const Router = require('koa-router')
 const { receiveWebhook, registerWebhook } = require('@shopify/koa-shopify-webhooks')
 
 const { ApiVersion } = require('@shopify/koa-shopify-graphql-proxy')
-const getSubscriptionUrl = require('./server/getSubscriptionUrl')
+const createSubscription = require('./server/createSubscription')
+const createUsagePlan = require('./server/createUsagePlan')
 
 const port = parseInt(process.env.PORT, 10) || 3000
 const dev = process.env.NODE_ENV !== 'production'
@@ -36,7 +37,7 @@ app.prepare().then(() => {
         // eslint-disable-next-line no-unused-vars
         const urlParams = new URLSearchParams(ctx.request.url)
         const { shop, accessToken } = ctx.state.shopify
-
+        // ctx.session.save(shop)
         ctx.cookies.set('shopOrigin', shop, {
           httpOnly: false,
           secure  : true,
@@ -64,7 +65,9 @@ app.prepare().then(() => {
       }
         ctx.redirect(`/?shop=${shop}`)
         const returnUrl = `${HOST}?shop=${shop}`
-        const subscriptionUrl = await getSubscriptionUrl(accessToken, shop, returnUrl)
+        const { subscriptionUrl, appSubscriptionCreateLineItemId } = await createSubscription(accessToken, shop, returnUrl)
+        console.log('appSubscriptionCreateLineItemId', appSubscriptionCreateLineItemId)
+        // const appUsageId = await createUsagePlan(accessToken, shop, appSubscriptionCreateLineItemId)
         ctx.redirect(subscriptionUrl)
       },
     })

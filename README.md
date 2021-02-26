@@ -11,6 +11,36 @@ Updating the code with react-hooks and using our linter as much as possible
     - SHOP : `MYSHOPNAME.myshopify.com` you can get `MYSHOPNAME` from Shopify Partner Account => Stores => click on test store and you will see the domain name at the top right corner.
     - HOST : `https://DOMAINCREATEDBYNGROK.ngrok.io`
     - API_VERSION : Use [the latest version from shopify realease-schedule](https://shopify.dev/concepts/about-apis/versioning#release-schedule) 
+
+From step 4 ~ 8, you can use either `localtunnel`, `ngrok` or any other tools to expose your localhost for development purpose.
+
+-----
+
+### Step 4 ~ 8 using `Localtunnel`
+4. install localtunnel
+```
+    yarn add localtunnel
+```
+5. Run localtunnel with a subdomain-of-your-choice.
+```
+// this command will generate https://subdomain-of-your-choice.loca.lt
+    lt --port 3000 --subdomain subdomain-of-your-choice
+```
+6. Add the url as HOST in `.env` file
+7. Login to [SHopify Partner Account](https://www.shopify.com/partners)
+8. Go to Apps => click on Sample Embedded App => App Setup => update App URL and Allowed redirection URL(s) fields in the URLs section
+```
+// App URL:
+    https://subdomain-of-your-choice.loca.lt
+
+// Allowed redirection URL(s):
+    https://subdomain-of-your-choice.loca.lt/auth/callback
+```
+
+-----
+
+### Step 4 ~ 8 using `ngrok`
+
 4. install ngrok
 ```
 npm install ngrok -g
@@ -44,6 +74,9 @@ Connections                   ttl     opn     rt1     rt5
 // Allowed redirection URL(s):
     https://0c9534e61dc5.ngrok.io/auth/callback
 ```
+
+----
+
 9. `npm start` to run your server. Make sure gnrok is still running. *** If you disconnected or ngrok domain has expired, you need to redo setup 5 ~ 8 again.
 10. To view the app, go to the test store `/admin` site and login => Apps => click on Sample Embedded App. It will take a while (2-3min when it's really slow) to run the app.
 # Things to Note
