@@ -1,11 +1,10 @@
-const createUsagePlan = async (accessToken, shop, subscriptionLineItemId) => {
-    console.log('subscriptionLineItemId', subscriptionLineItemId)
+const createUsagePlan = async ({accessToken, shop, subscriptionLineItemId, description="Super Mega Plan 100 emails", moneyInput}) => {
     const query = JSON.stringify({
       query: `mutation {
         appUsageRecordCreate(
           subscriptionLineItemId: "${subscriptionLineItemId}"
-          description: "Super Mega Plan 100 emails",
-          price:{ amount: 0, currencyCode: USD}
+          description: "${description}",
+          price:${moneyInput}
         ) {
           userErrors {
             field
@@ -20,17 +19,6 @@ const createUsagePlan = async (accessToken, shop, subscriptionLineItemId) => {
             }
             subscriptionLineItem {
                 id
-                usageRecords(first: 3) {
-                    edges {
-                        node {
-                            id
-                            price {
-                                amount
-                                currencyCode
-                            }
-                        }
-                    }
-                }
             }
           }
         }
@@ -47,7 +35,7 @@ const createUsagePlan = async (accessToken, shop, subscriptionLineItemId) => {
     })
   
     const responseJson = await response.json()
-    console.log('responseJson!!', responseJson)
+    console.log(responseJson)
     return responseJson.data
   }
   

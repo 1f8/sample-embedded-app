@@ -12,13 +12,14 @@ const Router = require('koa-router')
 const { receiveWebhook, registerWebhook } = require('@shopify/koa-shopify-webhooks')
 
 const { ApiVersion } = require('@shopify/koa-shopify-graphql-proxy')
-const createSubscription = require('./server/createSubscription')
-const createUsagePlan = require('./server/createUsagePlan')
+const createSubscription = require('./mutations/createSubscription')
+const createUsagePlan = require('./mutations/createUsagePlan')
 
 const port = parseInt(process.env.PORT, 10) || 3000
 const dev = process.env.NODE_ENV !== 'production'
 const app = next({ dev })
 const handle = app.getRequestHandler()
+const { AppUsagePricingDetails, AppRecurringPricingDetails, MoneyInput } = require('./mutations/Inputs/inputObjects')
 
 const { SHOPIFY_API_SECRET_KEY, SHOPIFY_API_KEY, HOST } = process.env
 
@@ -34,7 +35,6 @@ app.prepare().then(() => {
       secret: SHOPIFY_API_SECRET_KEY,
       scopes: [ 'read_products', 'write_products' ],
       async afterAuth(ctx) {
-        // eslint-disable-next-line no-unused-vars
         const urlParams = new URLSearchParams(ctx.request.url)
         const { shop, accessToken } = ctx.state.shopify
         // ctx.session.save(shop)
@@ -65,9 +65,18 @@ app.prepare().then(() => {
       }
         ctx.redirect(`/?shop=${shop}`)
         const returnUrl = `${HOST}?shop=${shop}`
-        const { subscriptionUrl, appSubscriptionCreateLineItemId } = await createSubscription(accessToken, shop, returnUrl)
-        console.log('appSubscriptionCreateLineItemId', appSubscriptionCreateLineItemId)
-        // const appUsageId = await createUsagePlan(accessToken, shop, appSubscriptionCreateLineItemId)
+
+        // creates appUsagePricingDetails objejct
+        const usagePriceDetails = AppUsagePricingDetails({terms:'Free up to 100 email!', amount: '0.01', currencyCode: 'USD'})
+        // creates appRecurringPricingDetails object
+        const recurringPriceDetails = AppRecurringPricingDetails({amount: '0'})
+
+        // Mutation - appSubscriptionCreate. Adds both recurring and usage price details
+        const { subscriptionUrl, subscriptionLineItemId } = await createSubscription({accessToken, shop, returnUrl, recurringPriceDetails, usagePriceDetails})
+
+        // Mutation - appUsageRecordCreate. Adds usage record for a subscriptionLineItemId
+        const appUsageId = await createUsagePlan({accessToken, shop, subscriptionLineItemId, description: 'super good deal plan', moneyInput: MoneyInput({ amount: '0' })})
+
         ctx.redirect(subscriptionUrl)
       },
     })
