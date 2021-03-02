@@ -1,5 +1,5 @@
-const createUsagePlan = async ({accessToken, shop, subscriptionLineItemId, description="Super Mega Plan 100 emails", moneyInput}) => {
-    const query = JSON.stringify({
+const createUsagePlan = async ({ accessToken, shop, subscriptionLineItemId, description='Super Mega Plan 100 emails', moneyInput }) => {
+    const query = {
       query: `mutation {
         appUsageRecordCreate(
           subscriptionLineItemId: "${subscriptionLineItemId}"
@@ -23,7 +23,7 @@ const createUsagePlan = async ({accessToken, shop, subscriptionLineItemId, descr
           }
         }
       }`
-    })
+    }
   
     const response = await fetch(`https://${shop}/admin/api/2020-10/graphql.json`, {
       method : 'POST',
@@ -31,11 +31,10 @@ const createUsagePlan = async ({accessToken, shop, subscriptionLineItemId, descr
         'Content-Type'          : 'application/json',
         'X-Shopify-Access-Token': accessToken,
       },
-      body: query
+      body: JSON.stringify(query)
     })
   
     const responseJson = await response.json()
-    console.log(responseJson)
     return responseJson.data
   }
   

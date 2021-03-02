@@ -1,4 +1,5 @@
 require('isomorphic-fetch')
+const { logger } = require('./utils/logger')
 const Koa = require('koa')
 const next = require('next')
 const { default: createShopifyAuth } = require('@shopify/koa-shopify-auth')
@@ -16,8 +17,8 @@ const createSubscription = require('./mutations/createSubscription')
 const createUsagePlan = require('./mutations/createUsagePlan')
 
 const port = parseInt(process.env.PORT, 10) || 3000
-const dev = process.env.NODE_ENV !== 'production'
-const app = next({ dev })
+const isDev = process.env.NODE_ENV !== 'production'
+const app = next({ isDev })
 const handle = app.getRequestHandler()
 const { AppUsagePricingDetails, AppRecurringPricingDetails, MoneyInput } = require('./mutations/Inputs/inputObjects')
 
@@ -35,7 +36,7 @@ app.prepare().then(() => {
       secret: SHOPIFY_API_SECRET_KEY,
       scopes: [ 'read_products', 'write_products' ],
       async afterAuth(ctx) {
-        const urlParams = new URLSearchParams(ctx.request.url)
+        new URLSearchParams(ctx.request.url)
         const { shop, accessToken } = ctx.state.shopify
         // ctx.session.save(shop)
         ctx.cookies.set('shopOrigin', shop, {
@@ -59,23 +60,23 @@ app.prepare().then(() => {
       })
    
       if (registration.success) {
-        console.log('Successfully registered webhook!')
+        logger.log('info', 'Successfully registered webhook!')
       } else {
-        console.log('Failed to register webhook', registration.result)
+        logger.log('info', 'Failed to register webhook %s', registration.result)
       }
         ctx.redirect(`/?shop=${shop}`)
         const returnUrl = `${HOST}?shop=${shop}`
 
-        // creates appUsagePricingDetails objejct
-        const usagePriceDetails = AppUsagePricingDetails({terms:'Free up to 100 email!', amount: '0.01', currencyCode: 'USD'})
+        /** creates appUsagePricingDetails objejct */
+        const usagePriceDetails = AppUsagePricingDetails({ terms: 'Free up to 100 email!', amount: '0.01', currencyCode: 'USD' })
         // creates appRecurringPricingDetails object
-        const recurringPriceDetails = AppRecurringPricingDetails({amount: '0'})
+        const recurringPriceDetails = AppRecurringPricingDetails({ amount: '0' })
 
-        // Mutation - appSubscriptionCreate. Adds both recurring and usage price details
-        const { subscriptionUrl, subscriptionLineItemId } = await createSubscription({accessToken, shop, returnUrl, recurringPriceDetails, usagePriceDetails})
+        /** Mutation - appSubscriptionCreate. Adds both recurring and usage price details */
+        const { subscriptionUrl, subscriptionLineItemId } = await createSubscription({ accessToken, shop, returnUrl, recurringPriceDetails, usagePriceDetails })
 
-        // Mutation - appUsageRecordCreate. Adds usage record for a subscriptionLineItemId
-        const appUsageId = await createUsagePlan({accessToken, shop, subscriptionLineItemId, description: 'super good deal plan', moneyInput: MoneyInput({ amount: '0' })})
+        /** Mutation - appUsageRecordCreate. Adds usage record for a subscriptionLineItemId */
+        await createUsagePlan({ accessToken, shop, subscriptionLineItemId, description: 'super good deal plan', moneyInput: MoneyInput({ amount: '0' }) })
 
         ctx.redirect(subscriptionUrl)
       },
@@ -84,9 +85,9 @@ app.prepare().then(() => {
 
   const webhook = receiveWebhook({ secret: SHOPIFY_API_SECRET_KEY })
 
-// TIP from shopify - In a production app, you would need to store the webhook in a database to access the response on the frontend. 
+/** TIP from shopify - In a production app, you would need to store the webhook in a database to access the response on the frontend. */
  router.post('/webhooks/products/create', webhook, (ctx) => {
-   console.log('received webhook: ', ctx.state.webhook)
+   logger.log('info', 'received webhook %s', ctx.state.webhook)
  })
 
   server.use(graphQLProxy({ version: ApiVersion.October19 }))
@@ -99,7 +100,6 @@ app.prepare().then(() => {
    server.use(router.routes())
 
   server.listen(port, () => {
-    // eslint-disable-next-line no-console
-    console.log(`> Ready on http://localhost:${port}`)
+    logger.log('info', '> Ready on http://localhost:%s', port)
   })
 })

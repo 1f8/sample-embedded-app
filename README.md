@@ -123,3 +123,7 @@ REQPONSE
         }
     }
 ```
+- shopOroigin cookie is set during authentication. re-authenticate by visiting this url in your browser
+```
+    https://{YOUR_NGROK_ADDRESS.io OR localTunnel URL}/auth?shop=YOUR_SHOPIFY_STORE.myshopify.com
+```
