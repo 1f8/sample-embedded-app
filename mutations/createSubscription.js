@@ -1,4 +1,6 @@
-const createSubscription = async ({accessToken, shop, returnUrl = process.env.HOST, subscriptionName='test subscription', usagePriceDetails, recurringPriceDetails, isTest="true"}) => {
+// const { logger } = require('../utils/logger')
+
+const createSubscription = async ({ accessToken, shop, returnUrl = process.env.HOST, subscriptionName='test subscription', usagePriceDetails, recurringPriceDetails, isTest='true' }) => {
 
     const query = JSON.stringify({
       query: `mutation {
@@ -42,11 +44,10 @@ const createSubscription = async ({accessToken, shop, returnUrl = process.env.HO
     })
   
     const responseJson = await response.json()
-    console.log('responseJson', responseJson)
+    // console.log(JSON.stringify(responseJson, null, 4))
 
     return {
-      subscriptionUrl: responseJson.data.appSubscriptionCreate.confirmationUrl,
-      subscriptionLineItemId: responseJson.data.appSubscriptionCreate.appSubscription.lineItems[0].id
+      subscriptionUrl: responseJson.data.appSubscriptionCreate.confirmationUrl, subscriptionLineItemId: responseJson.data.appSubscriptionCreate.appSubscription.lineItems[0].id
     }
   }
   

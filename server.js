@@ -60,23 +60,23 @@ app.prepare().then(() => {
       })
    
       if (registration.success) {
-        logger.log('info', 'Successfully registered webhook!')
+        logger.info('Successfully registered webhook!')
       } else {
-        logger.log('info', 'Failed to register webhook %s', registration.result)
+        logger.info('Failed to register webhook %s', registration.result)
       }
         ctx.redirect(`/?shop=${shop}`)
         const returnUrl = `${HOST}?shop=${shop}`
 
         /** creates appUsagePricingDetails objejct */
-        const usagePriceDetails = AppUsagePricingDetails({ terms: 'Free up to 100 email!', amount: '0.01', currencyCode: 'USD' })
+        const usagePriceDetails = AppUsagePricingDetails({ terms: 'Free up to 100 email!', amount: 0.01, currencyCode: 'USD' })
         // creates appRecurringPricingDetails object
-        const recurringPriceDetails = AppRecurringPricingDetails({ amount: '0' })
+        const recurringPriceDetails = AppRecurringPricingDetails({ amount: 0 })
 
         /** Mutation - appSubscriptionCreate. Adds both recurring and usage price details */
         const { subscriptionUrl, subscriptionLineItemId } = await createSubscription({ accessToken, shop, returnUrl, recurringPriceDetails, usagePriceDetails })
 
         /** Mutation - appUsageRecordCreate. Adds usage record for a subscriptionLineItemId */
-        await createUsagePlan({ accessToken, shop, subscriptionLineItemId, description: 'super good deal plan', moneyInput: MoneyInput({ amount: '0' }) })
+        await createUsagePlan({ accessToken, shop, subscriptionLineItemId, description: 'super good deal plan', moneyInput: MoneyInput({ amount: 0 }) })
 
         ctx.redirect(subscriptionUrl)
       },
@@ -87,7 +87,7 @@ app.prepare().then(() => {
 
 /** TIP from shopify - In a production app, you would need to store the webhook in a database to access the response on the frontend. */
  router.post('/webhooks/products/create', webhook, (ctx) => {
-   logger.log('info', 'received webhook %s', ctx.state.webhook)
+   logger.info('received webhook %s', ctx.state.webhook)
  })
 
   server.use(graphQLProxy({ version: ApiVersion.October19 }))
@@ -100,6 +100,6 @@ app.prepare().then(() => {
    server.use(router.routes())
 
   server.listen(port, () => {
-    logger.log('info', '> Ready on http://localhost:%s', port)
+    logger.info('Ready on http://localhost:%s', port)
   })
 })

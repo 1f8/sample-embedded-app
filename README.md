@@ -92,7 +92,7 @@ Example of webhook request and response
 REQUEST
 ```
     router.post('/webhooks/products/create', webhook, (ctx) => {
-        console.log('received webhook: ', ctx.state.webhook)
+        logger.info('received webhook %s', ctx.state.webhook)
     })
 ```
 
